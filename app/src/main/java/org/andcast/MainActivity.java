@@ -52,9 +52,9 @@ public class MainActivity extends Activity {
 		config.width = 1280;
 		config.height = 720;
 		config.dpi = 100;
-		config.bitrate = 5 * 1000 * 1000;
+		config.bitrate = 1 * 1000 * 1000;
 		config.frameRate = 30;
-		config.iFrameIntervalSecs = 1;
+		config.iFrameIntervalSecs = 2; // Twitch recommends 2 second key frame intervals
 		
 		MediaProjection mediaProj = mgr.getMediaProjection(resultCode, data);
 		if (mediaProj == null) {

@@ -28,6 +28,8 @@ public class MediaCodecEncoder {
 		format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
 		format.setInteger(MediaFormat.KEY_FRAME_RATE, config.frameRate);
 		format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, config.iFrameIntervalSecs);
+        format.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
+        format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, (1 / config.frameRate) * 1000 * 1000);
 		
 		encoder.encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 		
@@ -60,12 +62,13 @@ public class MediaCodecEncoder {
 					if (index >= 0) {
 
 						ByteBuffer buf = encoder.getOutputBuffer(index);
-						
+
 						byte[] buff = new byte[buf.limit()-buf.position()];
 						buf.get(buff);
 
                         System.out.println("Submitting frame");
-                        FfmpegMuxer.submitVideoFrame(buff);
+                        int ret = FfmpegMuxer.submitVideoFrame(buff);
+                        System.out.println("Ret: "+ret);
 
                         encoder.releaseOutputBuffer(index, false);
 					}

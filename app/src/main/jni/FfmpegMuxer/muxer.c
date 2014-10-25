@@ -22,7 +22,7 @@ static int ppsLength = 0;
 
 int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGURATION config) {
     AVOutputFormat *format;
-    
+
     av_register_all();
     avformat_network_init();
     
@@ -76,25 +76,56 @@ int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGUR
     return 0;
 }
 
-int submitVideoFrame(char *data, int length) {
-    AVPacket pkt;
-    int ret;
-    short tmp;
-    int netLen;
-    
-    switch (data[4] & 0x1F) {
-    case 0x5:
-        break;
+void handlePossibleParameterSet(char *data, int length) {
+    switch (data[4] & 0x1F)
+    {
     case 0x7:
         // The 00 00 00 01 prefix is chopped off
         memcpy(sps, &data[4], length - 4);
         spsLength = length - 4;
+        printf("Got SPS\n");
         break;
     case 0x8:
         // Same here; we're chopping off the Annex B prefix
         memcpy(pps, &data[4], length - 4);
         ppsLength = length - 4;
+        printf("Got PPS\n");
         break;
+    }
+}
+
+void saveParameterSets(char *data, int length) {
+    int lastOffset = -1;
+    int i;
+
+    for (i = 0; i < length; i++) {
+        if (data[i] == 0 && data[i+1] == 0 &&
+            data[i+2] == 0 && data[i+3] == 1)
+        {
+            if (lastOffset == -1) {
+                lastOffset = i;
+            }
+            else {
+                handlePossibleParameterSet(&data[lastOffset], i - lastOffset);
+
+                lastOffset = i;
+            }
+        }
+    }
+
+    if (lastOffset != -1) {
+        handlePossibleParameterSet(&data[lastOffset], length - lastOffset);
+    }
+}
+
+int submitVideoFrame(char *data, int length) {
+    AVPacket pkt;
+    int ret;
+    short tmp;
+    int netLen;
+
+    if (ppsLength == 0 || spsLength == 0) {
+        saveParameterSets(data, length);
     }
     
     // Initialize extradata if we haven't yet and have the required data
@@ -135,7 +166,7 @@ int submitVideoFrame(char *data, int length) {
         return 0;
     }
     else if (videoCodec->extradata == NULL) {
-        return 0;
+        return -2;
     }
     
     av_init_packet(&pkt);
