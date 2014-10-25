@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 21
     buildToolsVersion "20.0.0"
+    sourceSets.main.jni.srcDirs = []
 
     defaultConfig {
         applicationId "org.andcast"
@@ -15,6 +16,21 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+    }
+
+    sourceSets.main.jni.srcDirs = []
+
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        ndkDir = project.plugins.findPlugin('com.android.application').getNdkFolder()
+        commandLine "$ndkDir\\ndk-build.cmd",
+                'NDK_PROJECT_PATH=build/intermediates/ndk',
+                'NDK_LIBS_OUT=src/main/jniLibs',
+                'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
+                'NDK_APPLICATION_MK=src/main/jni/Application.mk'
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
     }
 }
 

@@ -28,8 +28,12 @@ public class CastingService extends Service {
 		public void start() throws IOException {
 			// Create the H264 encoder and input surface for the virtual display
 			encoder = MediaCodecEncoder.createEncoder(config);
-			
-			// Create the new virtual display
+
+            int res = FfmpegMuxer.initializeMuxer("flv", "rtmp://test",
+                    config.width, config.height, config.frameRate, config.iFrameIntervalSecs);
+            System.out.println("Muxer init: "+res);
+
+            // Create the new virtual display
 			display = projection.createVirtualDisplay("AndCast Virtual Display",
 					config.width, config.height, config.dpi,
 					DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
@@ -57,6 +61,8 @@ public class CastingService extends Service {
 		public void stop() {
 			// This will stop the encoder too
 			display.release();
+
+            FfmpegMuxer.cleanupMuxer();
 		}
 	}
 	

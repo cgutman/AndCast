@@ -54,35 +54,20 @@ public class MediaCodecEncoder {
 				BufferInfo info = new BufferInfo();
 				
 				System.out.println("Output thread has started");
-				
-				FileOutputStream fout;
-								
-				try {
-					fout = new FileOutputStream("/sdcard/andcast.h264");
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-				
+
 				for (;;) {
 					int index = encoder.dequeueOutputBuffer(info, -1);
 					if (index >= 0) {
-						System.out.println("Got output buffer");
-						
+
 						ByteBuffer buf = encoder.getOutputBuffer(index);
 						
 						byte[] buff = new byte[buf.limit()-buf.position()];
 						buf.get(buff);
-						try {
-							fout.write(buff);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							return;
-						}
-						
-						encoder.releaseOutputBuffer(index, false);
+
+                        System.out.println("Submitting frame");
+                        FfmpegMuxer.submitVideoFrame(buff);
+
+                        encoder.releaseOutputBuffer(index, false);
 					}
 					else {
 						switch (index) {
