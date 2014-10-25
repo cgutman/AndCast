@@ -55,6 +55,9 @@ public class MainActivity extends Activity {
 		System.out.println("Got result: "+resultCode);
 		
 		CastConfiguration config = new CastConfiguration();
+        config.streamMuxType = "flv";
+        config.streamUrl = "rtmp://test";
+
 		config.width = 1280;
 		config.height = 720;
 		config.dpi = 100;
@@ -64,6 +67,7 @@ public class MainActivity extends Activity {
 		
 		MediaProjection mediaProj = mgr.getMediaProjection(resultCode, data);
 		if (mediaProj == null) {
+            // TODO: Display a dialog here
 			return;
 		}
 		
@@ -71,7 +75,7 @@ public class MainActivity extends Activity {
 		try {
 			binder.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+            // TODO: Display a dialog here
 			e.printStackTrace();
 			return;
 		}
