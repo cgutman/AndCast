@@ -16,7 +16,13 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+
+import static android.content.Context.MEDIA_PROJECTION_SERVICE;
 
 public class MainActivity extends Activity {
 	
@@ -73,12 +79,52 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
 
-		mgr = (MediaProjectionManager) MainActivity.this.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-		
-		bindService(new Intent(this, CastingService.class), serviceConnection,
-				Service.BIND_AUTO_CREATE);
+        final Button streamButton = (Button) findViewById(R.id.stream_button);
+        streamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchStream();
+            }
+        });
+
+
+        final Button settingsButton = (Button) findViewById(R.id.settings_button);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent moveToSettingsActivity = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(moveToSettingsActivity);
+            }
+        });
 	}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void launchStream() {
+        mgr = (MediaProjectionManager) MainActivity.this.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+        bindService(new Intent(this, CastingService.class), serviceConnection,
+                Service.BIND_AUTO_CREATE);
+
+    }
 }
