@@ -32,7 +32,7 @@ public class CastingService extends Service {
 			this.config = config;
 		}
 
-        public void enterForeground() {
+        private void enterForeground() {
             Intent intent = new Intent(CastingService.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pendIntent = PendingIntent.getActivity(CastingService.this, 0, intent, 0);
@@ -49,8 +49,12 @@ public class CastingService extends Service {
             startForeground(NOTIFICATION_ID, builder.build());
         }
 
-        public void exitForeground() {
+        private void exitForeground() {
             stopForeground(true);
+        }
+
+        public boolean isCasting() {
+            return encoder != null;
         }
 
 		public void start() throws IOException {
