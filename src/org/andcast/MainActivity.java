@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 		config.width = 1280;
 		config.height = 720;
 		config.dpi = 100;
-		config.bitrate = 10000;
+		config.bitrate = 5 * 1000 * 1000;
 		config.frameRate = 30;
 		config.iFrameIntervalSecs = 1;
 		
