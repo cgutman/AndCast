@@ -1,5 +1,7 @@
 package org.andcast;
 
+import java.io.IOException;
+
 import org.andcast.casting.CastConfiguration;
 import org.andcast.casting.CastingService;
 import org.andcast.casting.CastingService.CastingBinder;
@@ -10,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -53,9 +56,19 @@ public class MainActivity extends Activity {
 		config.frameRate = 30;
 		config.iFrameIntervalSecs = 1;
 		
-		binder.start(mgr.getMediaProjection(resultCode, data), config);
+		MediaProjection mediaProj = mgr.getMediaProjection(resultCode, data);
+		if (mediaProj == null) {
+			return;
+		}
 		
-		System.out.println("Started");
+		binder.initialize(mediaProj, config);
+		try {
+			binder.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
 	}  
 
 	@Override
