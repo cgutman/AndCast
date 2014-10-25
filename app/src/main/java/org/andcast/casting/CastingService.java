@@ -15,47 +15,48 @@ public class CastingService extends Service {
 	private Binder binder = new CastingBinder();
 	
 	public class CastingBinder extends Binder {
-		public void start(MediaProjection projection, CastConfiguration config) {
-			/*GLHelper helper = new GLHelper();
+		private MediaCodecEncoder encoder;
+		private VirtualDisplay display;
+		private MediaProjection projection;
+		private CastConfiguration config;
+		
+		public void initialize(MediaProjection projection, CastConfiguration config) {
+			this.projection = projection;
+			this.config = config;
+		}
+
+		public void start() throws IOException {
+			// Create the H264 encoder and input surface for the virtual display
+			encoder = MediaCodecEncoder.createEncoder(config);
 			
-			EGLSurface glSurface = helper.createOffscrenSurface(config.width, config.height);
-			SurfaceTexture texture = new SurfaceTexture((int) glSurface.getNativeHandle());
-			Surface surface = new Surface(texture);*/
-			
-			MediaCodecEncoder encoder;
-			try {
-				encoder = MediaCodecEncoder.createEncoder(config);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			}
-			
-			projection.createVirtualDisplay("AndCast Virtual Display",
+			// Create the new virtual display
+			display = projection.createVirtualDisplay("AndCast Virtual Display",
 					config.width, config.height, config.dpi,
 					DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
 					encoder.getInputSurface(), new VirtualDisplay.Callback() {
-						@Override
-						public void onPaused() {
-							System.out.println("onPaused");
-						}
-						
-						@Override
-						public void onResumed() {
-							System.out.println("onResumed");
-						}
-						
-						@Override
-						public void onStopped() {
-							System.out.println("onStopped");
-						}
-					}, null);
-			System.out.println("Started");
-			
-			encoder.start();
+				@Override
+				public void onPaused() {
+					System.out.println("onPaused");
+					encoder.stop();
+				}
+
+				@Override
+				public void onResumed() {
+					System.out.println("onResumed");
+					encoder.start();
+				}
+
+				@Override
+				public void onStopped() {
+					System.out.println("onStop");
+					encoder.release();
+				}
+			}, null);
 		}
-		
+
 		public void stop() {
+			// This will stop the encoder too
+			display.release();
 		}
 	}
 	
