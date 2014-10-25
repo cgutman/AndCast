@@ -1,9 +1,14 @@
 package org.andcast;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
+import static android.view.View.OnClickListener;
 
 
 public class HomeActivity extends Activity {
@@ -12,6 +17,24 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        final Button streamButton = (Button) findViewById(R.id.stream_button);
+        streamButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchStream();
+            }
+        });
+
+
+        final Intent moveToSettingsActivity = new Intent(this, SettingsActivity.class);
+        final Button settingsButton = (Button) findViewById(R.id.settings_button);
+        settingsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(moveToSettingsActivity);
+            }
+        });
     }
 
 
@@ -32,5 +55,11 @@ public class HomeActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void launchStream() {
+
+        //use settings in here to launch el streem
+
     }
 }
