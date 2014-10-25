@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/jackson-core-2.1.3-e9e9bd9cd6533e9bcbc31f1970aa43a88d8b973f.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.1.3/f6c3aed1cdfa21b5c1737c915186ea93a95a58bd/jackson-core-2.1.3.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f6c3aed1cdfa21b5c1737c915186ea93a95a58bd"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/google-api-services-youtube-v3-rev120-1.19.0-27357e68ba86e0d1e5f4372936b9c1016726b0ff.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.apis/google-api-services-youtube/v3-rev120-1.19.0/9befa937f06683ea4b038fc8667ec41f4480677f/google-api-services-youtube-v3-rev120-1.19.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9befa937f06683ea4b038fc8667ec41f4480677f"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/guava-jdk5-13.0-e119b43008bb6907994ff09ed47e97955d756b6f.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.guava/guava-jdk5/13.0/381ae6c8add7c98e9bcddb1e0b898400cd6fc3f7/guava-jdk5-13.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="381ae6c8add7c98e9bcddb1e0b898400cd6fc3f7"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/jsr305-1.3.9-51b13a578c949dff2b05eae9cf7f9e982dd0dde8.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/1.3.9/40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf/jsr305-1.3.9.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/google-http-client-jackson2-1.19.0-7509f4694ff1c7e207b147d11a5d5abfe2c0ab5d.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client-jackson2/1.19.0/81dbf9795d387d5e80e55346582d5f2fb81a42eb/google-http-client-jackson2-1.19.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="81dbf9795d387d5e80e55346582d5f2fb81a42eb"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/google-api-client-1.19.0-6b77a47a4192ca28a69df5973a7bb622d72cf8d1.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.api-client/google-api-client/1.19.0/6a21277d9bebe267b7ddee028b241eebc756c040/google-api-client-1.19.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="6a21277d9bebe267b7ddee028b241eebc756c040"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/google-http-client-1.19.0-3122003ec42dcfe7fd7ecc953a45a7975bb747ed.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client/1.19.0/cdca49ad0977c040f603478aa2e16b2775c8fec6/google-http-client-1.19.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="cdca49ad0977c040f603478aa2e16b2775c8fec6"/>
+    <item
+        dex="/home/aaron/AndroidstudioProjects/AndCast/app/build/intermediates/pre-dexed/release/google-oauth-client-1.19.0-3e73d0b7f1f32f6568f2319c9ab7046739e627de.jar"
+        jar="/home/aaron/.gradle/caches/modules-2/files-2.1/com.google.oauth-client/google-oauth-client/1.19.0/d473a8962e14a707a3716637e4898bb2dd9643f2/google-oauth-client-1.19.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="d473a8962e14a707a3716637e4898bb2dd9643f2"/>
+
+</pre-dex-items>
