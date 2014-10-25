@@ -58,7 +58,7 @@ int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGUR
     videoCodec->height = config->height;
     videoCodec->time_base.den = config->frameRate;
     videoCodec->time_base.num = 1;
-    videoCodec->gop_size = config->iFrameInterval * config->frameRate;
+    videoCodec->gop_size = config->frameRate * config->iFrameInterval;
     videoCodec->pix_fmt = AV_PIX_FMT_YUV420P;
     
     if (format->flags & AVFMT_GLOBALHEADER) {
@@ -118,7 +118,9 @@ void saveParameterSets(char *data, int length) {
     }
 }
 
-int submitVideoFrame(char *data, int length) {
+static int frameNum;
+
+int submitVideoFrame(char *data, int length, long frameTimestamp) {
     AVPacket pkt;
     int ret;
     short tmp;
@@ -179,7 +181,7 @@ int submitVideoFrame(char *data, int length) {
     netLen = htonl(length - 4);
     memcpy(data, &netLen, sizeof(netLen));
     
-    pkt.pts = pkt.dts = AV_NOPTS_VALUE;
+    pkt.pts = frameTimestamp;
     pkt.stream_index = videoStream->index;
     pkt.data = (unsigned char*)(data);
     pkt.size = length;

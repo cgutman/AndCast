@@ -9,6 +9,6 @@ typedef struct _CAST_CONFIGURATION {
 
 int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGURATION config);
 
-int submitVideoFrame(char *data, int length);
+int submitVideoFrame(char *data, int length, long frameTimestamp);
 
 void cleanupMuxer(void);

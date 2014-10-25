@@ -18,5 +18,5 @@ public class FfmpegMuxer {
 
     public static native void cleanupMuxer();
 
-    public static native int submitVideoFrame(byte[] buffer);
+    public static native int submitVideoFrame(byte[] buffer, long frameTimestamp);
 }

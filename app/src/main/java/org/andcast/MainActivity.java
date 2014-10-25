@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 		config.dpi = 100;
 		config.bitrate = 1 * 1000 * 1000;
 		config.frameRate = 30;
-		config.iFrameIntervalSecs = 2; // Twitch recommends 2 second key frame intervals
+		config.iFrameIntervalSecs = 1;
 		
 		MediaProjection mediaProj = mgr.getMediaProjection(resultCode, data);
 		if (mediaProj == null) {

@@ -22,7 +22,7 @@ Java_org_andcast_casting_FfmpegMuxer_initializeMuxer(JNIEnv *env, jobject this, 
 }
 
 JNIEXPORT jint JNICALL
-Java_org_andcast_casting_FfmpegMuxer_submitVideoFrame(JNIEnv *env, jobject this, jbyteArray buffer)
+Java_org_andcast_casting_FfmpegMuxer_submitVideoFrame(JNIEnv *env, jobject this, jbyteArray buffer, jlong frameTimestamp)
 {
     char *data;
     int ret;
@@ -32,7 +32,7 @@ Java_org_andcast_casting_FfmpegMuxer_submitVideoFrame(JNIEnv *env, jobject this,
         return -1;
     }
     
-    ret = submitVideoFrame(data, (*env)->GetArrayLength(env, buffer));
+    ret = submitVideoFrame(data, (*env)->GetArrayLength(env, buffer), frameTimestamp);
     
     (*env)->ReleaseByteArrayElements(env, buffer, data, 0);
     

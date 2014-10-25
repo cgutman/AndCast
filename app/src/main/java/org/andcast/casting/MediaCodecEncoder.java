@@ -57,6 +57,8 @@ public class MediaCodecEncoder {
 				
 				System.out.println("Output thread has started");
 
+                long firstTime = System.currentTimeMillis();
+
 				for (;;) {
 					int index = encoder.dequeueOutputBuffer(info, -1);
 					if (index >= 0) {
@@ -67,7 +69,7 @@ public class MediaCodecEncoder {
 						buf.get(buff);
 
                         System.out.println("Submitting frame");
-                        int ret = FfmpegMuxer.submitVideoFrame(buff);
+                        int ret = FfmpegMuxer.submitVideoFrame(buff, System.currentTimeMillis() - firstTime);
                         System.out.println("Ret: "+ret);
 
                         encoder.releaseOutputBuffer(index, false);
