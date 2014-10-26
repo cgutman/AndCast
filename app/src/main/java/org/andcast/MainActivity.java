@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import static android.content.Context.MEDIA_PROJECTION_SERVICE;
 
@@ -103,7 +104,7 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_home);
 
-        final Button streamButton = (Button) findViewById(R.id.stream_button);
+        final ImageButton streamButton = (ImageButton) findViewById(R.id.start_button);
         streamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
