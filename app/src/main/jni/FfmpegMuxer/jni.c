@@ -11,6 +11,8 @@ Java_org_andcast_casting_FfmpegMuxer_initializeMuxer(JNIEnv *env, jobject this, 
     jint audioBitrate, jint audioChannels)
 {
     CAST_CONFIGURATION config;
+    const char *formatNameStr = NULL;
+    const char *fileNameStr = NULL;
     
     config.width = width;
     config.height = height;
@@ -28,8 +30,15 @@ Java_org_andcast_casting_FfmpegMuxer_initializeMuxer(JNIEnv *env, jobject this, 
         config.muxEnableFlags |= ENABLE_AUDIO;
     }
 
-    return initializeMuxer((*env)->GetStringUTFChars(env, formatName, NULL),
-                           (*env)->GetStringUTFChars(env, fileName, NULL),
+    if (formatName != NULL) {
+        formatNameStr = (*env)->GetStringUTFChars(env, formatName, NULL);
+    }
+    if (fileName != NULL) {
+        fileNameStr = (*env)->GetStringUTFChars(env, fileName, NULL);
+    }
+
+    return initializeMuxer(formatNameStr,
+                           fileNameStr,
                            &config);
 }
 

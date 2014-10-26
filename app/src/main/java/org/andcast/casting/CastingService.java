@@ -58,7 +58,7 @@ public class CastingService extends Service {
         }
 
         public boolean isCasting() {
-            return encoder != null;
+            return running;
         }
 
 		public void start() throws IOException {
@@ -127,8 +127,12 @@ public class CastingService extends Service {
 		}
 
         private void startDataSources() {
+            System.out.println("startDataSources");
+
             if (!running) {
-                encoder.start();
+                if (encoder != null) {
+                    encoder.start();
+                }
 
                 if (audioCap != null) {
                     audioCap.start();
@@ -139,8 +143,12 @@ public class CastingService extends Service {
         }
 
         private void pauseDataSources() {
+            System.out.println("pauseDataSources");
+
             if (running) {
-                encoder.stop();
+                if (encoder != null) {
+                    encoder.stop();
+                }
 
                 if (audioCap != null) {
                     audioCap.stop();
@@ -151,6 +159,8 @@ public class CastingService extends Service {
         }
 
         private void releaseDataSources() {
+            System.out.println("releaseDataSources");
+
             if (running) {
                 pauseDataSources();
             }
@@ -162,14 +172,17 @@ public class CastingService extends Service {
                 audioCap = null;
             }
 
-            encoder.release();
-            encoder = null;
+            if (encoder != null) {
+                encoder.release();
+                encoder = null;
+            }
 
             exitForeground();
         }
 
 		public void stop() {
-			// This will trigger the rest of the cleanup process
+            releaseDataSources();
+            projection.stop();
 			display.release();
 		}
 	}
