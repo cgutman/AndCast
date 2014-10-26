@@ -29,8 +29,9 @@ public class CastingService extends Service {
 		private VirtualDisplay display;
 		private MediaProjection projection;
 		private CastConfiguration config;
-		
-		public void initialize(MediaProjection projection, CastConfiguration config) {
+        private boolean running;
+
+        public void initialize(MediaProjection projection, CastConfiguration config) {
 			this.projection = projection;
 			this.config = config;
 		}
@@ -91,37 +92,20 @@ public class CastingService extends Service {
 				@Override
 				public void onPaused() {
 					System.out.println("onPaused");
-					encoder.stop();
-
-                    if (audioCap != null) {
-                        audioCap.stop();
-                    }
+                    pauseDataSources();
 				}
 
 				@Override
 				public void onResumed() {
 					System.out.println("onResumed");
-					encoder.start();
-
-                    if (audioCap != null) {
-                        audioCap.start();
-                    }
+                    startDataSources();
 				}
 
 				@Override
 				public void onStopped() {
 					System.out.println("onStop");
-                    FfmpegMuxer.cleanupMuxer();
+                    releaseDataSources();
 
-                    if (audioCap != null) {
-                        audioCap.release();
-                        audioCap = null;
-                    }
-
-					encoder.release();
-                    encoder = null;
-
-                    exitForeground();
 				}
 			}, null);
             if (display == null) {
@@ -141,6 +125,48 @@ public class CastingService extends Service {
             // Become a foreground service so we're unlikely to be killed
             enterForeground();
 		}
+
+        private void startDataSources() {
+            if (!running) {
+                encoder.start();
+
+                if (audioCap != null) {
+                    audioCap.start();
+                }
+
+                running = true;
+            }
+        }
+
+        private void pauseDataSources() {
+            if (running) {
+                encoder.stop();
+
+                if (audioCap != null) {
+                    audioCap.stop();
+                }
+
+                running = false;
+            }
+        }
+
+        private void releaseDataSources() {
+            if (running) {
+                pauseDataSources();
+            }
+
+            FfmpegMuxer.cleanupMuxer();
+
+            if (audioCap != null) {
+                audioCap.release();
+                audioCap = null;
+            }
+
+            encoder.release();
+            encoder = null;
+
+            exitForeground();
+        }
 
 		public void stop() {
 			// This will trigger the rest of the cleanup process
