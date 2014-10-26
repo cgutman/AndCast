@@ -12,10 +12,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,15 +52,23 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)  
 	{  
-		super.onActivityResult(requestCode, resultCode, data);  
+		super.onActivityResult(requestCode, resultCode, data);
+
+        String baseTwitchUrl = "rtmp://live.twitch.tv/app/";
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String twitchKey = sharedPref.getString("twitch_stream_key", "");
 
 		System.out.println("Got result: "+resultCode);
 		
 		CastConfiguration config = new CastConfiguration();
         config.streamMuxType = "flv";
-        config.streamUrl = "rtmp://test";
+        config.streamUrl = baseTwitchUrl + twitchKey;
 
-		config.width = 1280;
+        System.out.println("Stream Url is: " + config.streamUrl);
+
+
+        config.width = 1280;
 		config.height = 720;
 		config.dpi = 100;
 		config.bitrate = 1 * 1000 * 1000;
@@ -84,6 +94,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+
         setContentView(R.layout.activity_home);
 
         final Button streamButton = (Button) findViewById(R.id.stream_button);
