@@ -23,6 +23,7 @@ public class CastingService extends Service {
 	
 	public class CastingBinder extends Binder {
 		private MediaCodecEncoder encoder;
+        private AudioCapturer audioCap;
 		private VirtualDisplay display;
 		private MediaProjection projection;
 		private CastConfiguration config;
@@ -61,13 +62,19 @@ public class CastingService extends Service {
 			// Create the H264 encoder and input surface for the virtual display
 			encoder = MediaCodecEncoder.createEncoder(config);
 
+            audioCap = new AudioCapturer(config.audioChannels);
+
             int res = FfmpegMuxer.initializeMuxer(config.streamMuxType, config.streamUrl,
-                    config.width, config.height, config.frameRate, config.iFrameIntervalSecs);
+                    config.width, config.height, config.frameRate, config.iFrameIntervalSecs,
+                    config.audioBitrate, config.audioChannels);
             if (res != 0) {
                 encoder.release();
                 encoder = null;
 
-                throw new IOException("Failed to start casting");
+                audioCap.release();
+                audioCap = null;
+
+                throw new IOException("Failed to start casting: "+res);
             }
 
             // Create the new virtual display
@@ -79,18 +86,23 @@ public class CastingService extends Service {
 				public void onPaused() {
 					System.out.println("onPaused");
 					encoder.stop();
+                    audioCap.stop();
 				}
 
 				@Override
 				public void onResumed() {
 					System.out.println("onResumed");
 					encoder.start();
+                    audioCap.start();
 				}
 
 				@Override
 				public void onStopped() {
 					System.out.println("onStop");
                     FfmpegMuxer.cleanupMuxer();
+
+                    audioCap.release();
+                    audioCap = null;
 
 					encoder.release();
                     encoder = null;
@@ -100,6 +112,9 @@ public class CastingService extends Service {
 			}, null);
             if (display == null) {
                 FfmpegMuxer.cleanupMuxer();
+
+                audioCap.release();
+                audioCap = null;
 
                 encoder.release();
                 encoder = null;

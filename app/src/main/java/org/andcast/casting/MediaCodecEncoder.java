@@ -90,9 +90,8 @@ public class MediaCodecEncoder {
 						byte[] buff = new byte[buf.limit()-buf.position()];
 						buf.get(buff);
 
-                        System.out.println("Submitting frame");
-                        int ret = FfmpegMuxer.submitVideoFrame(buff, System.currentTimeMillis() - firstTime);
-                        System.out.println("Ret: "+ret);
+                        int ret = FfmpegMuxer.submitVideoFrame(buff, buff.length, System.currentTimeMillis() - firstTime);
+                        System.out.println("Video frame Ret: "+ret);
 
                         encoder.releaseOutputBuffer(index, false);
 					}

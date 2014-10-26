@@ -11,4 +11,6 @@ public class CastConfiguration {
 	public int frameRate;
 	public int iFrameIntervalSecs;
 
+    public int audioChannels;
+    public int audioBitrate;
 }

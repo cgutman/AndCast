@@ -14,9 +14,16 @@ public class FfmpegMuxer {
         System.loadLibrary("ffmpeg_muxer");
     }
 
-    public static native int initializeMuxer(String formatName, String fileName, int width, int height, int frameRate, int iFrameInterval);
+    public static native int initializeMuxer(String formatName, String fileName,
+                                             int width, int height, int frameRate, int iFrameInterval,
+                                             int audioBitrate, int audioChannels);
 
     public static native void cleanupMuxer();
 
-    public static native int submitVideoFrame(byte[] buffer, long frameTimestamp);
+    public static native int getRequiredAudioBufferSize();
+
+    public static native int submitVideoFrame(byte[] buffer, int length, long frameTimestamp);
+
+    public static native int submitAudioFrame(byte[] buffer, int length, long frameTimestamp);
+
 }
