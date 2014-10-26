@@ -13,16 +13,23 @@
         android:layout_height="wrap_content"
         android:text="Settings"
         android:id="@+id/settings_button"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="41dp" />
+        android:layout_marginBottom="61dp"
+        android:enabled="false" />
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Streaming"
-        android:id="@+id/stream_button"
-        android:layout_below="@+id/settings_button"
+        android:id="@+id/start_button"
+        android:src="@drawable/button"
+        android:background="@null"
+        android:adjustViewBounds="false"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
 </RelativeLayout>

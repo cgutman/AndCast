@@ -1,4 +1,4 @@
 <resources>
-    <style name="AppBaseTheme" parent="android:Theme.Material" />
+    <style name="AppBaseTheme" parent="android:Theme.Material.NoActionBar" />
     <style name="AppTheme" parent="AppBaseTheme" />
 </resources>
