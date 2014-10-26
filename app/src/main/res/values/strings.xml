@@ -7,5 +7,10 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_checkbox_twitch">Enable</string>
+    <string name="summary_checkbox_twitch">Stream your screen to Twitch</string>
+    <string name="twitch_preferences">Twitch</string>
+    <string name="title_twitch_stream_key">Stream key</string>
+    <string name="summary_twitch_stream_key">Stream key from your Twitch dashboard</string>
 
 </resources>
