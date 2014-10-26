@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/twitch_preferences">
+        <CheckBoxPreference
+            android:key="checkbox_twitch"
+            android:title="@string/title_checkbox_twitch"
+            android:summary="@string/summary_checkbox_twitch"
+            android:defaultValue="false"
+             />
+        <EditTextPreference
+            android:key="twitch_stream_key"
+            android:title="@string/title_twitch_stream_key"
+            android:summary="@string/summary_twitch_stream_key"
+            android:defaultValue=""
+            />
 
+    </PreferenceCategory>
 </PreferenceScreen>
