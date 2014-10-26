@@ -30,6 +30,7 @@ public class CastingService extends Service {
 		private MediaProjection projection;
 		private CastConfiguration config;
         private boolean running;
+        private boolean reaped;
 
         public void initialize(MediaProjection projection, CastConfiguration config) {
 			this.projection = projection;
@@ -73,6 +74,8 @@ public class CastingService extends Service {
                     config.width, config.height, config.frameRate, config.iFrameIntervalSecs,
                     config.audioBitrate, config.audioChannels);
             if (res != 0) {
+                projection.stop();
+
                 encoder.release();
                 encoder = null;
 
@@ -109,6 +112,8 @@ public class CastingService extends Service {
 				}
 			}, null);
             if (display == null) {
+                projection.stop();
+
                 FfmpegMuxer.cleanupMuxer();
 
                 if (audioCap != null) {
@@ -160,6 +165,12 @@ public class CastingService extends Service {
 
         private void releaseDataSources() {
             System.out.println("releaseDataSources");
+
+            if (reaped) {
+                return;
+            }
+
+            reaped = true;
 
             if (running) {
                 pauseDataSources();
