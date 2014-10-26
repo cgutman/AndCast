@@ -17,6 +17,7 @@ public class MediaCodecEncoder {
 	
 	private MediaCodec encoder;
 	private Surface inputSurface;
+    private Thread outputThread;
 	
 	public static MediaCodecEncoder createEncoder(CastConfiguration config) throws IOException {
 		MediaCodecEncoder encoder = new MediaCodecEncoder();
@@ -39,6 +40,16 @@ public class MediaCodecEncoder {
 	}
 	
 	public void stop() {
+        if (outputThread != null) {
+            outputThread.interrupt();
+
+            try {
+                outputThread.join();
+            } catch (InterruptedException e) {}
+
+            outputThread = null;
+        }
+
 		encoder.stop();
 	}
 	
@@ -50,7 +61,7 @@ public class MediaCodecEncoder {
 	public void start() {
 		encoder.start();
 		
-		new Thread() {
+		outputThread = new Thread() {
 			@Override
 			public void run() {
 				BufferInfo info = new BufferInfo();
@@ -60,7 +71,18 @@ public class MediaCodecEncoder {
                 long firstTime = System.currentTimeMillis();
 
 				for (;;) {
-					int index = encoder.dequeueOutputBuffer(info, -1);
+                    int index;
+                    do {
+                        index = encoder.dequeueOutputBuffer(info, 100 * 1000);
+
+                        // Check if we've been interrupted when we time out
+                        if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
+                            if (Thread.interrupted()) {
+                                return;
+                            }
+                        }
+                    } while (index == MediaCodec.INFO_TRY_AGAIN_LATER);
+
 					if (index >= 0) {
 
 						ByteBuffer buf = encoder.getOutputBuffer(index);
@@ -87,7 +109,9 @@ public class MediaCodecEncoder {
 					}
 				}
 			}
-		}.start();
+		};
+
+        outputThread.start();
 	}
 	
 	public Surface getInputSurface() {
