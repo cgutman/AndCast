@@ -76,8 +76,8 @@ public class MainActivity extends Activity {
 		config.frameRate = 30;
 		config.iFrameIntervalSecs = 1;
 
-        config.audioBitrate = 96000;
-        config.audioChannels = 2;
+        config.audioBitrate = 0;
+        config.audioChannels = 0;
 		
 		MediaProjection mediaProj = mgr.getMediaProjection(resultCode, data);
 		if (mediaProj == null) {

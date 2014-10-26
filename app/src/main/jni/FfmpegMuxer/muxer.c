@@ -7,6 +7,8 @@
 #include <libavformat/avformat.h>
 #include <libswresample/swresample.h>
 
+#include <pthread.h>
+
 #include "muxer.h"
 
 static AVOutputFormat *format;
@@ -33,7 +35,11 @@ static int dstSamplesLinesize;
 static int dstSamplesSize;
 static int maxDstSamplesCount;
 
+static int hasWrittenStreamHeader;
+
 static SwrContext *swrContext;
+
+static pthread_mutex_t streamLock;
 
 int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGURATION config) {
     AVOutputFormat *format;
@@ -42,6 +48,12 @@ int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGUR
 
     av_register_all();
     avformat_network_init();
+
+    hasWrittenStreamHeader = 0;
+    spsLength = 0;
+    ppsLength = 0;
+
+    pthread_mutex_init(&streamLock, NULL);
     
     format = av_guess_format(formatName, fileName, NULL);
     if (format == NULL) {
@@ -168,11 +180,6 @@ int initializeMuxer(const char *formatName, const char *fileName, PCAST_CONFIGUR
             return -4;
         }
     }
-
-    // FIXME: Needs to be done earlier for H264
-
-    printf("Writing header\n");
-    avformat_write_header(formatContext, NULL);
     
     return 0;
 }
@@ -238,6 +245,11 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
     int got_packet;
     int sampleCount;
 
+    // If no stream header has been written yet, don't do anything
+    if (hasWrittenStreamHeader == 0) {
+        return 0;
+    }
+
     frame = avcodec_alloc_frame();
     if (frame == NULL) {
         fprintf(stderr, "Failed to allocate frame\n");
@@ -282,7 +294,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
     if (ret < 0) {
         fprintf(stderr, "avcodec_fill_audio_frame() failed: %d\n", ret);
         avcodec_free_frame(&frame);
-        return ret;
+                    return ret;
     }
 
     // pkt is freed on failure or !got_packet
@@ -292,7 +304,8 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
     if (ret < 0) {
         fprintf(stderr, "avcodec_encode_audio2() failed: %d\n", ret);
         avcodec_free_frame(&frame);
-        return ret;
+                    return ret;
+
     }
 
     if (!got_packet) {
@@ -302,13 +315,19 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
 
     pkt.stream_index = audioStream->index;
 
+    pkt.pts = frameTimestamp;
+
+    pthread_mutex_lock(&streamLock);
     ret = av_interleaved_write_frame(formatContext, &pkt);
+    pthread_mutex_unlock(&streamLock);
+
     avcodec_free_frame(&frame);
     av_free_packet(&pkt);
 
     if (ret != 0) {
         fprintf(stderr, "av_interleaved_write_frame() failed: %d\n", ret);
-        return ret;
+                    return ret;
+
     }
 
     return 0;
@@ -358,6 +377,10 @@ int submitVideoFrame(char *data, int length, long frameTimestamp) {
         memcpy(&videoCodecCtx->extradata[8+spsLength+3], pps, ppsLength);
     
         // Write the format header
+        avformat_write_header(formatContext, NULL);
+
+        // Now allow audio transmission
+        hasWrittenStreamHeader = 1;
         return 0;
     }
     else if (videoCodecCtx->extradata == NULL) {
@@ -379,7 +402,9 @@ int submitVideoFrame(char *data, int length, long frameTimestamp) {
     pkt.data = (unsigned char*)(data);
     pkt.size = length;
     
+    pthread_mutex_lock(&streamLock);
     ret = av_interleaved_write_frame(formatContext, &pkt);
+    pthread_mutex_unlock(&streamLock);
     
     return ret;
 }
@@ -404,4 +429,6 @@ void cleanupMuxer(void) {
         av_free(formatContext);
         formatContext = NULL;
     }
+
+    pthread_mutex_destroy(&streamLock);
 }

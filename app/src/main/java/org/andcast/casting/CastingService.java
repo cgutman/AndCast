@@ -64,7 +64,9 @@ public class CastingService extends Service {
 			// Create the H264 encoder and input surface for the virtual display
 			encoder = MediaCodecEncoder.createEncoder(config);
 
-            audioCap = new AudioCapturer(config.audioChannels);
+            if (config.audioChannels != 0) {
+                audioCap = new AudioCapturer(config.audioChannels);
+            }
 
             int res = FfmpegMuxer.initializeMuxer(config.streamMuxType, config.streamUrl,
                     config.width, config.height, config.frameRate, config.iFrameIntervalSecs,
@@ -73,8 +75,10 @@ public class CastingService extends Service {
                 encoder.release();
                 encoder = null;
 
-                audioCap.release();
-                audioCap = null;
+                if (audioCap != null) {
+                    audioCap.release();
+                    audioCap = null;
+                }
 
                 throw new IOException("Failed to start casting: "+res);
             }
@@ -88,14 +92,20 @@ public class CastingService extends Service {
 				public void onPaused() {
 					System.out.println("onPaused");
 					encoder.stop();
-                    audioCap.stop();
+
+                    if (audioCap != null) {
+                        audioCap.stop();
+                    }
 				}
 
 				@Override
 				public void onResumed() {
 					System.out.println("onResumed");
 					encoder.start();
-                    audioCap.start();
+
+                    if (audioCap != null) {
+                        audioCap.start();
+                    }
 				}
 
 				@Override
@@ -103,8 +113,10 @@ public class CastingService extends Service {
 					System.out.println("onStop");
                     FfmpegMuxer.cleanupMuxer();
 
-                    audioCap.release();
-                    audioCap = null;
+                    if (audioCap != null) {
+                        audioCap.release();
+                        audioCap = null;
+                    }
 
 					encoder.release();
                     encoder = null;
@@ -115,8 +127,10 @@ public class CastingService extends Service {
             if (display == null) {
                 FfmpegMuxer.cleanupMuxer();
 
-                audioCap.release();
-                audioCap = null;
+                if (audioCap != null) {
+                    audioCap.release();
+                    audioCap = null;
+                }
 
                 encoder.release();
                 encoder = null;
