@@ -28,7 +28,7 @@
             android:key="youtube_stream_key"
             android:title="@string/title_youtube_stream_key"
             android:summary="@string/summary_youtube_stream_key"
-            android:defaultValue="false"
+            android:defaultValue=""
             />
 
     </PreferenceCategory>
@@ -41,10 +41,10 @@
             android:defaultValue="false"
             />
         <EditTextPreference
-            android:key="sdcard_stream_key"
-            android:title="@string/title_sdcard_stream_key"
-            android:summary="@string/summary_sdcard_stream_key"
-            android:defaultValue="false"
+            android:key="sdcard_folder"
+            android:title="@string/title_sdcard_folder"
+            android:summary="@string/summary_sdcard_folder"
+            android:defaultValue=""
             />
 
     </PreferenceCategory>

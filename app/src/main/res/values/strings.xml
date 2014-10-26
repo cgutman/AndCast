@@ -23,8 +23,8 @@
     <string name="sdcard_preferences">SD Card</string>
     <string name="title_checkbox_sdcard">Enable</string>
     <string name="summary_checkbox_sdcard">Stream your screen to SD Card</string>
-    <string name="title_sdcard_stream_key">Stream key</string>
-    <string name="summary_sdcard_stream_key">Stream key from your SD Card dashboard</string>
+    <string name="title_sdcard_folder">SD Card Folder</string>
+    <string name="summary_sdcard_folder">Folder to save recordings to</string>
 
 
 </resources>

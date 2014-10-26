@@ -32,6 +32,8 @@ public class MainActivity extends Activity {
 	private CastingBinder binder;
 	private MediaProjectionManager mgr;
     private boolean isStreaming = false;
+    private final static String BASE_TWITCH_URL = "rtmp://live.twitch.tv/app/";
+    private final static String BASE_YOUTUBE_URL = "rtmp://a.rtmp.youtube.com/live2/";
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -50,23 +52,48 @@ public class MainActivity extends Activity {
 		
 	};
 
+    // Gets the output string (RTMP or filename based on the preferences)
+    private String getOutputUrl() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPref.getBoolean("checkbox_twitch", false)) {
+            String twitchStreamkey = sharedPref.getString("twitch_stream_key", "");
+            if (twitchStreamkey.isEmpty()) {
+                return null;
+            } else {
+                return BASE_TWITCH_URL + twitchStreamkey;
+            }
+        } else if (sharedPref.getBoolean("checkbox_youtube", false)) {
+            String youtubeStreamKey = sharedPref.getString("youtube_stream_key", "");
+            if (youtubeStreamKey.isEmpty()) {
+                return null;
+            } else {
+                return BASE_YOUTUBE_URL + youtubeStreamKey;
+            }
+        } else if (sharedPref.getBoolean("checkbox_sdcard", true)) {
+            String folderLocation = sharedPref.getString("sdcard_folder", "");
+            if (folderLocation.isEmpty()) {
+                return null;
+            } else {
+                return folderLocation;
+            }
+        }
+        return null;
+    }
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)  
 	{  
 		super.onActivityResult(requestCode, resultCode, data);
 
-        String baseTwitchUrl = "rtmp://live.twitch.tv/app/";
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String twitchKey = sharedPref.getString("twitch_stream_key", "");
-
 		System.out.println("Got result: "+resultCode);
-		
+
 		CastConfiguration config = new CastConfiguration();
         config.streamMuxType = "flv";
-        config.streamUrl = baseTwitchUrl + twitchKey;
+        config.streamUrl = getOutputUrl();
 
-        System.out.println("Stream Url is: " + config.streamUrl);
+        if (config.streamUrl == null) {
+            // This means shit broke so lets throw the users some fancy dialog box thingy
+        }
 
 
         config.width = 1280;
