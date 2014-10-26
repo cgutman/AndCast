@@ -33,13 +33,14 @@ public class AudioCapturer {
             @Override
             public void run() {
                 byte[] buffer = new byte[FfmpegMuxer.getRequiredAudioBufferSize()];
+                long startTimestamp = System.currentTimeMillis();
 
                 for (;;) {
                     int length;
 
                     length = record.read(buffer, 0, buffer.length);
                     if (length != 0) {
-                        int ret = FfmpegMuxer.submitAudioFrame(buffer, length, (long) 0);
+                        int ret = FfmpegMuxer.submitAudioFrame(buffer, length, System.currentTimeMillis() - startTimestamp);
                         System.out.println("Audio "+length+" ret: "+ret);
                     }
                 }
