@@ -16,4 +16,36 @@
             />
 
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="YouTube">
+        <CheckBoxPreference
+            android:key="checkbox_youtube"
+            android:title="@string/title_checkbox_youtube"
+            android:summary="@string/summary_checkbox_youtube"
+            android:defaultValue="false"
+            />
+        <EditTextPreference
+            android:key="youtube_stream_key"
+            android:title="@string/title_youtube_stream_key"
+            android:summary="@string/summary_youtube_stream_key"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Store on SD Card">
+        <CheckBoxPreference
+            android:key="checkbox_sdcard"
+            android:title="@string/title_checkbox_sdcard"
+            android:summary="@string/summary_checkbox_sdcard"
+            android:defaultValue="false"
+            />
+        <EditTextPreference
+            android:key="sdcard_stream_key"
+            android:title="@string/title_sdcard_stream_key"
+            android:summary="@string/summary_sdcard_stream_key"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
 </PreferenceScreen>

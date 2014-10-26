@@ -20,8 +20,10 @@ public class CastingService extends Service {
 	private Binder binder = new CastingBinder();
 
     private static final int NOTIFICATION_ID = 30;
-	
-	public class CastingBinder extends Binder {
+
+
+
+    public class CastingBinder extends Binder {
 		private MediaCodecEncoder encoder;
         private AudioCapturer audioCap;
 		private VirtualDisplay display;

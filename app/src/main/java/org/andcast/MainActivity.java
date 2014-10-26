@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
 	
 	private CastingBinder binder;
 	private MediaProjectionManager mgr;
+    private boolean isStreaming = false;
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -38,8 +39,7 @@ public class MainActivity extends Activity {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			binder = (CastingBinder) service;
 			
-			System.out.println("Starting capture intent");
-			MainActivity.this.startActivityForResult(mgr.createScreenCaptureIntent(), 1);
+
 		}
 
 		@Override
@@ -101,6 +101,11 @@ public class MainActivity extends Activity {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
+        mgr = (MediaProjectionManager) MainActivity.this.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+        bindService(new Intent(this, CastingService.class), serviceConnection,
+                Service.BIND_AUTO_CREATE);
+
 
         setContentView(R.layout.activity_home);
 
@@ -108,7 +113,12 @@ public class MainActivity extends Activity {
         streamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchStream();
+                if(!binder.isCasting() ) {
+                    launchStream();
+                }
+                else{
+                    endStream();
+                }
             }
         });
 
@@ -143,10 +153,16 @@ public class MainActivity extends Activity {
     }
 
     public void launchStream() {
-        mgr = (MediaProjectionManager) MainActivity.this.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
-        bindService(new Intent(this, CastingService.class), serviceConnection,
-                Service.BIND_AUTO_CREATE);
+        System.out.println("Starting capture intent");
+        MainActivity.this.startActivityForResult(mgr.createScreenCaptureIntent(), 1);
 
+    }
+
+
+    public void endStream() {
+        if(binder.isCasting()) {
+            binder.stop();
+        }
     }
 }
