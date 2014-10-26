@@ -253,7 +253,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
     frame = avcodec_alloc_frame();
     if (frame == NULL) {
         fprintf(stderr, "Failed to allocate frame\n");
-        return -10000000 + -1;
+        return -1;
     }
 
     av_init_packet(&pkt);
@@ -273,7 +273,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
             sampleCount, audioCodecCtx->sample_fmt, 0);
         if (ret < 0) {
             fprintf(stderr, "av_samples_alloc() failed: %d\n", ret);
-            return -20000000 + ret;
+            return ret;
         }
 
         maxDstSamplesCount = sampleCount;
@@ -285,7 +285,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
         (const unsigned char **)srcSamplesData, srcSamplesCount);
     if (ret < 0) {
         fprintf(stderr, "swr_convert() failed: %d\n", ret);
-        return -30000000 + ret;
+        return ret;
     }
 
     frame->nb_samples = sampleCount;
@@ -294,7 +294,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
     if (ret < 0) {
         fprintf(stderr, "avcodec_fill_audio_frame() failed: %d\n", ret);
         avcodec_free_frame(&frame);
-                    return -40000000 + ret;
+                    return ret;
     }
 
     // pkt is freed on failure or !got_packet
@@ -304,7 +304,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
     if (ret < 0) {
         fprintf(stderr, "avcodec_encode_audio2() failed: %d\n", ret);
         avcodec_free_frame(&frame);
-                    return -50000000 + ret;
+                    return ret;
 
     }
 
@@ -315,12 +315,10 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
 
     pkt.stream_index = audioStream->index;
 
-    pkt.pts = AV_NOPTS_VALUE; //frameTimestamp;
-    pkt.dts = AV_NOPTS_VALUE;
+    pkt.pts = frameTimestamp;
 
     pthread_mutex_lock(&streamLock);
-    //ret = av_interleaved_write_frame(formatContext, &pkt);
-    ret = av_write_frame(formatContext, &pkt);
+    ret = av_interleaved_write_frame(formatContext, &pkt);
     pthread_mutex_unlock(&streamLock);
 
     avcodec_free_frame(&frame);
@@ -328,7 +326,7 @@ int submitAudioFrame(char *data, int length, long frameTimestamp) {
 
     if (ret != 0) {
         fprintf(stderr, "av_interleaved_write_frame() failed: %d\n", ret);
-                    return -60000000 + ret;
+                    return ret;
 
     }
 
@@ -399,16 +397,13 @@ int submitVideoFrame(char *data, int length, long frameTimestamp) {
     netLen = htonl(length - 4);
     memcpy(data, &netLen, sizeof(netLen));
     
-    //pkt.pts = frameTimestamp;
-        pkt.pts = AV_NOPTS_VALUE; //frameTimestamp;
-        pkt.dts = AV_NOPTS_VALUE;
+    pkt.pts = frameTimestamp;
     pkt.stream_index = videoStream->index;
     pkt.data = (unsigned char*)(data);
     pkt.size = length;
     
     pthread_mutex_lock(&streamLock);
-    ret = av_write_frame(formatContext, &pkt);
-    //ret = av_interleaved_write_frame(formatContext, &pkt);
+    ret = av_interleaved_write_frame(formatContext, &pkt);
     pthread_mutex_unlock(&streamLock);
     
     return ret;
