@@ -31,7 +31,6 @@ public class MainActivity extends Activity {
 	
 	private CastingBinder binder;
 	private MediaProjectionManager mgr;
-    private boolean isStreaming = false;
     private final static String BASE_TWITCH_URL = "rtmp://live.twitch.tv/app/";
     private final static String BASE_YOUTUBE_URL = "rtmp://a.rtmp.youtube.com/live2/";
 
@@ -40,9 +39,13 @@ public class MainActivity extends Activity {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			binder = (CastingBinder) service;
-			
-
-		}
+            ImageButton startButton = (ImageButton) MainActivity.this.findViewById(R.id.start_button);
+            if (binder.isCasting()) {
+                startButton.setImageResource(R.drawable.button_on);
+            } else {
+                startButton.setImageResource(R.drawable.button);
+            }
+        }
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
@@ -115,6 +118,8 @@ public class MainActivity extends Activity {
 		binder.initialize(mediaProj, config);
 		try {
 			binder.start();
+            ImageButton startButton = (ImageButton) MainActivity.this.findViewById(R.id.start_button);
+            startButton.setImageResource(R.drawable.button_on);
 		} catch (IOException e) {
             // TODO: Display a dialog here
 			e.printStackTrace();
@@ -189,6 +194,8 @@ public class MainActivity extends Activity {
 
     public void endStream() {
         if(binder.isCasting()) {
+            ImageButton startButton = (ImageButton) MainActivity.this.findViewById(R.id.start_button);
+            startButton.setImageResource(R.drawable.button);
             binder.stop();
         }
     }

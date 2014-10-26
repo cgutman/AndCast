@@ -3,8 +3,6 @@ package org.andcast;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.view.Menu;
-import android.view.MenuItem;
 
 
 public class SettingsActivity extends Activity {
@@ -18,7 +16,6 @@ public class SettingsActivity extends Activity {
                 R.id.settings_activity, new SettingsFragment()
         ).commit();
     }
-
 
     public static class SettingsFragment extends PreferenceFragment {
         @Override
